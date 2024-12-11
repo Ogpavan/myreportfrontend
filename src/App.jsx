@@ -5,17 +5,20 @@ const App = () => {
   const [extractedText, setExtractedText] = useState("");
   const [aiAnalysis, setAiAnalysis] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingStage, setLoadingStage] = useState(""); // Track the current stage
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setLoadingStage("Uploading Report...");
 
     const formData = new FormData(e.target);
 
     try {
-      const response = await axios.post(
+      // Make the request
+   const response = await axios.post(
         "https://myreportbackend.onrender.com/process-report",
         formData,
         {
@@ -25,8 +28,20 @@ const App = () => {
         }
       );
 
+      // Update the loading stage after successful upload
+      setLoadingStage("Extracting Text...");
       setExtractedText(response.data.text);
-      setAiAnalysis(response.data.analysis);
+
+      // Simulate a delay to reflect analysis stage
+      setTimeout(() => {
+        setLoadingStage("Analyzing with AI...");
+        setAiAnalysis(response.data.analysis);
+      }, 1000); // Adjust the delay if necessary
+
+      // Reset the stage after completion
+      setTimeout(() => {
+        setLoadingStage("");
+      }, 2000);
     } catch (err) {
       setError("Error: " + err.message);
     } finally {
@@ -61,7 +76,7 @@ const App = () => {
           disabled={loading}
           className="px-6 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400"
         >
-          {loading ? "Uploading..." : "Upload and Analyze"}
+          {loading ? loadingStage : "Upload and Analyze"}
         </button>
       </form>
 
@@ -69,9 +84,13 @@ const App = () => {
 
       <div
         className={`output mt-8 p-6 border border-gray-300 rounded-md shadow-sm bg-white ${
-          extractedText ? "block" : "hidden"
+          extractedText || aiAnalysis ? "block" : "hidden"
         }`}
       >
+        <p className="font-medium text-gray-800">Extracted Text:</p>
+        <pre className="whitespace-pre-wrap text-gray-700 mt-2">
+          {extractedText}
+        </pre>
         <p className="font-medium text-gray-800 mt-4">AI Analysis:</p>
         <pre className="whitespace-pre-wrap text-gray-700 mt-2">
           {aiAnalysis}
