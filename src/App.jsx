@@ -74,8 +74,8 @@ const App = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen  ">
+      <div className="bg-white   rounded-lg p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           Medical Report Reader
         </h1>
